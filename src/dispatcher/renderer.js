@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const os = require('os');
-const showdown  = require('showdown');
+const showdown = require('showdown');
 
 function renderTitle(ad) {
-    return `דירת ${ad.rooms} חדרים, בשכונת ${ad.extraData['שכונה']} ברחוב ${ad.extraData['רחוב']}. מחיר: ${ad.price} ש״ח`;
+    const neighbourhoodText = ad.extraData['שכונה'] ? ` בשכונת ${ad.extraData['שכונה']}` : '';
+    return `${ad.apartmentType} ${ad.rooms} חדרים,${neighbourhoodText} ברחוב ${ad.extraData['רחוב']}. מחיר: ${ad.price} ש״ח`;
 }
 
 function renderMap(ad) {
@@ -36,7 +37,7 @@ function render(ad, renderType = 'markdown') {
         body: renderBody(ad)
     }
 
-    switch(renderType) {
+    switch (renderType) {
         case 'html': {
             const converter = new showdown.Converter();
             return _.mapValues(markdown, md => converter.makeHtml(md));
