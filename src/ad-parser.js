@@ -16,7 +16,7 @@ function joinTextLines(...args) {
 
 function parseInnerDetail(str = '') {
     try {
-        return str.replace(/\D/g, '');
+        return str.replace(/[^\d.]/g, '');
     } catch (_) {
         return str;
     }
@@ -29,6 +29,10 @@ function parseEntrance(str = '') {
         value: parsed.isValid() ? parsed : str,
         success: parsed.isValid(),
     };
+}
+
+function parseApartmentType(str = '') {
+    return str.split('·')[0].trim().replace('\"', '').replace(/'/g, '').replace('&nbsp;', '');
 }
 
 class EnhancedAd {
@@ -73,15 +77,23 @@ class EnhancedAd {
             .value();
         this.adNumber = _.get(apiResponse, 'data.ad_number', 'unknown');
         this.url = _.get(apiResponse, 'data.canonical_url');
+
+        this.extraLabels = [];
+    }
+
+    setExtraLabels(labels) {
+        this.extraLabels = labels;
     }
 }
 
 class BasicAd {
     constructor(apiResponse) {
+        this.publishDate = moment(apiResponse.date, 'YYYY-MM-DD HH:mm:ss');
         this.coordinates = _.mapValues(apiResponse.coordinates, parseFloat);
         this.images = [apiResponse.img_url].filter(Boolean);
         this.text = joinTextLines(apiResponse.line_1, apiResponse.line_2, apiResponse.line_3);
         this.title = joinTextLines(apiResponse.title_1, apiResponse.title_2);
+        this.apartmentType = parseApartmentType(apiResponse.line_1);
         this.price = apiResponse.price;
         this.id = apiResponse.id;
         this.url = `http://yad2.co.il/s/c/${apiResponse.link_token}`;

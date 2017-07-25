@@ -1,13 +1,12 @@
 const fetch = require('node-fetch');
 const FormData = require('form-data');
-const query = require('../config/query');
 
 const BASE_URL = 'https://app.yad2.co.il/api/v1.0/';
 const BASE_PAGE_URL = BASE_URL + 'feed/feed.php';
 const BASE_AD_URL = BASE_URL + 'ad/ad.php';
 
-function fetchPage(options) {
-	const queryParams = Object.assign({}, query.apartment, options);
+function fetchPage(apartment, options) {
+	const queryParams = Object.assign({}, apartment, options);
 	const formData = new FormData();
 
 	Object.keys(queryParams).forEach(key => {
